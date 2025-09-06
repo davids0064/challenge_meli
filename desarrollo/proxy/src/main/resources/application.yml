@@ -1,0 +1,36 @@
+server:
+  port: 8080
+
+spring:
+  redis:
+    host: localhost
+    port: 6379
+
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: meli-proxy
+              uri: https://api.mercadolibre.com
+              predicates:
+                - Path=/**
+
+rate-limiter:
+  defaults:
+    replenishRate: 1000   # default req/min
+    burstCapacity: 1000
+  rules:
+    - path: /categories/
+      replenishRate: 10000
+      burstCapacity: 10000
+    - path: /items/
+      ip: 152.152.152.152
+      replenishRate: 10
+      burstCapacity: 10
+    - ip: 152.152.152.152
+      replenishRate: 1000
+      burstCapacity: 1000
+    - ip: 127.0.0.1
+      replenishRate: 1
+      burstCapacity: 1
