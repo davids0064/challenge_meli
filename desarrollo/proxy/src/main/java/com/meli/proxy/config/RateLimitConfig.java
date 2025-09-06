@@ -1,10 +1,12 @@
 package com.meli.proxy.config;
 
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
+@Data
 @Configuration
 @ConfigurationProperties(prefix = "rate-limiter")
 public class RateLimitConfig {
@@ -12,7 +14,6 @@ public class RateLimitConfig {
     private Defaults defaults;
     private List<Rule> rules;
 
-    // === Getters & Setters ===
     public Defaults getDefaults() {
         return defaults;
     }
@@ -28,8 +29,6 @@ public class RateLimitConfig {
     public void setRules(List<Rule> rules) {
         this.rules = rules;
     }
-
-    // === Clases internas ===
 
     public static class Defaults {
         private int replenishRate;

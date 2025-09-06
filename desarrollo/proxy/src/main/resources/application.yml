@@ -5,7 +5,9 @@ spring:
   redis:
     host: localhost
     port: 6379
-
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/proxymelidb
   cloud:
     gateway:
       server:
@@ -18,7 +20,7 @@ spring:
 
 rate-limiter:
   defaults:
-    replenishRate: 1000   # default req/min
+    replenishRate: 1000
     burstCapacity: 1000
   rules:
     - path: /categories/
@@ -34,3 +36,13 @@ rate-limiter:
     - ip: 127.0.0.1
       replenishRate: 1
       burstCapacity: 1
+
+resilience4j.circuitbreaker:
+  instances:
+    meliBackend:
+      slidingWindowSize: 10
+      failureRateThreshold: 50
+      slowCallDurationThreshold: 2s
+      slowCallRateThreshold: 100
+      waitDurationInOpenState: 10s
+      permittedNumberOfCallsInHalfOpenState: 3

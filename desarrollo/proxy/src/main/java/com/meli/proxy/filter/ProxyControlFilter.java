@@ -1,16 +1,24 @@
 package com.meli.proxy.filter;
 
 import com.meli.proxy.config.RateLimitConfig;
+import com.meli.proxy.service.ILogService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.reactivestreams.Publisher;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.server.reactive.ServerHttpResponse;
+import org.springframework.http.server.reactive.ServerHttpResponseDecorator;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+import org.springframework.cloud.client.circuitbreaker.ReactiveCircuitBreakerFactory;
+import org.springframework.cloud.client.circuitbreaker.ReactiveCircuitBreaker;
 
+
+import java.awt.image.DataBuffer;
 import java.time.Duration;
 
 @Slf4j
@@ -20,7 +28,8 @@ public class ProxyControlFilter implements GlobalFilter {
 
     private final ReactiveStringRedisTemplate redisTemplate;
     private final RateLimitConfig rateLimitConfig;
-
+    private final ReactiveCircuitBreakerFactory<?, ?> circuitBreakerFactory;
+    private final ILogService iLogService;
     private final Duration WINDOW = Duration.ofMinutes(1);
 
     @Override
@@ -43,7 +52,7 @@ public class ProxyControlFilter implements GlobalFilter {
         log.error("matchedRule.getIp() >>>>>>>> " + matchedRule.getIp());
         // Si no hay regla específica, usar defaults
         int maxRequests = (matchedRule != null) ? matchedRule.getReplenishRate() : rateLimitConfig.getDefaults().getReplenishRate();
-
+        iLogService.registroLog(ip, path);
         return redisTemplate.opsForValue().increment(key)
                 .flatMap(count -> {
                     if (count == 1) {
@@ -54,11 +63,25 @@ public class ProxyControlFilter implements GlobalFilter {
                         exchange.getResponse().setStatusCode(HttpStatus.TOO_MANY_REQUESTS);
                         return exchange.getResponse().setComplete();
                     }
-                    return chain.filter(exchange)
-                            .doOnSuccess(aVoid -> log.info("Request completed → IP: {}, Path: {}", path));
+                    ReactiveCircuitBreaker circuitBreaker = circuitBreakerFactory.create("meliBackend");
+                    return circuitBreaker.run(
+                            chain.filter(exchange)
+                                    .timeout(Duration.ofSeconds(1))
+                                    .doOnSubscribe(sub -> log.info("Subscribed to backend call"))
+                                    .doOnTerminate(() -> log.info("Backend call terminated")),
+                            throwable -> {
+                                log.error("Circuit breaker triggered → {}", throwable.getMessage());
+                                exchange.getResponse().setStatusCode(HttpStatus.SERVICE_UNAVAILABLE);
+                                return exchange.getResponse().setComplete();
+                            });
                 });
     }
 
+    /**
+     * @param ip
+     * @param path
+     * @return
+     */
     private RateLimitConfig.Rule obtenerReglas(String ip, String path) {
         return rateLimitConfig.getRules().stream()
                 .filter(rule -> {
