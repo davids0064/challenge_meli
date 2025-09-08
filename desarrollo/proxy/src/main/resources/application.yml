@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8083
 
 spring:
   redis:
@@ -24,6 +24,10 @@ rate-limiter:
     burstCapacity: 1000
   rules:
     - path: /categories/
+      ip: 98e9c8820987.ngrok-free.app
+      replenishRate: 10000
+      burstCapacity: 10000
+    - path: /categories/
       replenishRate: 10000
       burstCapacity: 10000
     - path: /items/
@@ -46,3 +50,15 @@ resilience4j.circuitbreaker:
       slowCallRateThreshold: 100
       waitDurationInOpenState: 10s
       permittedNumberOfCallsInHalfOpenState: 3
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    prometheus:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
