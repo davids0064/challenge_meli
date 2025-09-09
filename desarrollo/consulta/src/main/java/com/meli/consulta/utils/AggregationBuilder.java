@@ -26,15 +26,17 @@ public class AggregationBuilder {
         ops.add(Aggregation.project()
                 .andExpression("dateToString('%Y-%m-%d', fechaUso)").as("fecha")
                 .and("ip").as("ip")
-                .and("path").as("path"));
+                .and("path").as("path")
+                .and("status").as("status"));
 
-        ops.add(Aggregation.group(Fields.fields("fecha", "ip", "path"))
+        ops.add(Aggregation.group(Fields.fields("fecha", "ip", "path", "status"))
                 .count().as("count"));
 
         ops.add(Aggregation.project("count")
                 .and("_id.fecha").as("fecha")
                 .and("_id.ip").as("ip")
-                .and("_id.path").as("path"));
+                .and("_id.path").as("path")
+                .and("_id.status").as("status"));
 
         Sort sort = sortByCountDesc ? Sort.by(Sort.Direction.DESC, "count") : Sort.by(Sort.Direction.ASC, "fecha");
         ops.add(Aggregation.sort(sort));

@@ -7,13 +7,13 @@
                       <div class="card-icon">
                           <i class="material-icons">info_outline</i>
                       </div>
-                      <p class="card-category">Cantidad peticiones</p>
-                      <h3 class="card-title">{{ cantidadConsultadosHoy }}</h3>
+                      <p class="card-category">Cantidad peticiones 200</p>
+                      <h3 class="card-title">{{ cantidadOk }}</h3>
                   </div>
                   <div class="card-footer">
                       <div class="stats">
                         <div class="stats">
-                          <i class="material-icons">date_range</i> Hoy
+                          <i class="material-icons">date_range</i> Exitosas
                       </div>
                       </div>
                   </div>
@@ -25,12 +25,12 @@
                       <div class="card-icon">
                           <i class="material-icons">info_outline</i>
                       </div>
-                      <p class="card-category">Cantidad peticiones</p>
-                      <h3 class="card-title">{{ cantidadConsultadosDosDias }}</h3>
+                      <p class="card-category">Cantidad peticiones 429</p>
+                      <h3 class="card-title">{{ cantidadManyToReques }}</h3>
                   </div>
                   <div class="card-footer">
                       <div class="stats">
-                          <i class="material-icons">date_range</i> Últimos 2 días
+                          <i class="material-icons">date_range</i> Too many request 
                       </div>
                   </div>
               </div>
@@ -41,12 +41,12 @@
                       <div class="card-icon">
                           <i class="material-icons">info_outline</i>
                       </div>
-                      <p class="card-category">Cantidad peticiones</p>
-                      <h3 class="card-title">{{ cantidadConsultadosCincoDias }}</h3>
+                      <p class="card-category">Cantidad peticiones 503</p>
+                      <h3 class="card-title">{{ cantidadUnavailable }}</h3>
                   </div>
                   <div class="card-footer">
                       <div class="stats">
-                          <i class="material-icons">date_range</i> Últimos 5 días
+                          <i class="material-icons">date_range</i> Fallidos
                       </div>
                   </div>
               </div>
@@ -154,6 +154,7 @@
                           <thead class="text-warning">
                               <th>Path</th>
                               <th>IP</th>
+                              <th>Status</th>
                               <th>Fecha</th>
                               <th>Cantidad</th>
                           </thead>
@@ -161,6 +162,7 @@
                               <tr *ngFor="let dato of datosResultado">
                                   <td>{{ dato.path }}</td>
                                   <td>{{ dato.ip }}</td>
+                                  <td>{{ dato.status }}</td>
                                   <td>{{ dato.fecha }}</td>
                                   <td>{{ dato.count }}</td>
                               </tr>

@@ -19,6 +19,9 @@ export class DashboardComponent implements OnInit {
   verGraficas:any = false;
   formDatosConsulta!: FormGroup;
   datosResultado: any = [];
+  cantidadOk: any = 0;
+  cantidadManyToReques: any = 0;
+  cantidadUnavailable: any = 0;
   fechaActual = new Date();
   fechaInicial = new Date('01/01/1900');
   minFechaIni: Date = new Date();
@@ -42,9 +45,7 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.cantidadPeticionesHoy();
-    this.cantidadPeticionesUltimosDosDias();
-    this.cantidadPeticionesUltimosCincoDias();
+    this.consultarConsultasPorStatus();
   }
 
   limpiar(){
@@ -74,42 +75,20 @@ export class DashboardComponent implements OnInit {
     }
   };
 
-  cantidadPeticionesHoy(){
-    const hoy = this.fechaActual.toISOString().split('T')[0]; 
-    console.log('fechaActual >>>>>> ' + hoy)
-    this.dashboardServiceService.consultarPorFechas(hoy, hoy).subscribe(data => {
-      for(let i = 0; data.length >i; i++){
-        this.cantidadConsultadosHoy = this.cantidadConsultadosHoy + data[i].count;
+  consultarConsultasPorStatus(){
+    this.dashboardServiceService.consultarStatus().subscribe(data => {
+      for(let i = 0; data.length > i; i++){
+        if(data[i].status == 'OK'){
+          this.cantidadOk = data[i].count + this.cantidadOk;
+        } else if(data[i].status == 'TOO_MANY_REQUESTS'){
+          this.cantidadManyToReques = data[i].count + this.cantidadManyToReques;
+        } else if(data[i].status == 'SERVICE_UNAVAILABLE'){
+          this.cantidadUnavailable = data[i].count + this.cantidadUnavailable;
+        }
       }
     });
   }
 
-
-    cantidadPeticionesUltimosDosDias(){
-    const haceDosDias = new Date(this.fechaActual);
-    haceDosDias.setDate(this.fechaActual.getDate() - 2);
-    const fechaHaceDosDias  = haceDosDias.toISOString().split('T')[0]; 
-    console.log(fechaHaceDosDias)
-     const fechaActual = this.fechaActual.toISOString().split('T')[0];
-    this.dashboardServiceService.consultarPorFechas(fechaHaceDosDias, fechaActual).subscribe(data => {
-      for(let i = 0; data.length >i; i++){
-        this.cantidadConsultadosDosDias = this.cantidadConsultadosDosDias + data[i].count;
-      }
-    });
-  }
-
-  cantidadPeticionesUltimosCincoDias(){
-    const haceCincoDias = new Date(this.fechaActual);
-    haceCincoDias.setDate(this.fechaActual.getDate() - 4);
-    const fechaHaceCincoDias  = haceCincoDias.toISOString().split('T')[0]; 
-    console.log(fechaHaceCincoDias)
-     const fechaActual = this.fechaActual.toISOString().split('T')[0];
-    this.dashboardServiceService.consultarPorFechas(fechaHaceCincoDias, fechaActual).subscribe(data => {
-      for(let i = 0; data.length >i; i++){
-        this.cantidadConsultadosCincoDias = this.cantidadConsultadosCincoDias + data[i].count;
-      }
-    });
-  }
 
   /*graficaLineal(){
 

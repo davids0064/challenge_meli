@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
@@ -29,16 +30,16 @@ public class ConsultaControllerIntegrationTest {
         DatosConsultaOutDTO dto = new DatosConsultaOutDTO();
         dto.setIp("10.0.0.1");
         dto.setPath("categoria3");
-        dto.setFecha("2025-09-01");
+        dto.setFecha(LocalDate.of(2025, 9, 8));
         dto.setCount(789);
-        when(iLogService.consultarPorCategoria("categoria1")).thenReturn(List.of(dto));
+        when(iLogService.consultarPorCategoria("categoria3")).thenReturn(List.of(dto));
 
         mockMvc.perform(get("/api/consultar/consumo-por-categoria")
-                        .param("filtro", "categoria1"))
+                        .param("filtro", "categoria3"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].path").value("categoria3"))
                 .andExpect(jsonPath("$[0].ip").value("10.0.0.1"))
-                .andExpect(jsonPath("$[0].fecha").value("2025-09-01"))
+                .andExpect(jsonPath("$[0].fecha").value("2025-09-08"))
                 .andExpect(jsonPath("$[0].count").value(789));
     }
 
@@ -46,8 +47,8 @@ public class ConsultaControllerIntegrationTest {
     void consultarPorIp_deberiaRetornarListaDeDTOs() throws Exception {
         DatosConsultaOutDTO dto = new DatosConsultaOutDTO();
         dto.setIp("10.0.0.1");
-        dto.setPath("categoria3");
-        dto.setFecha("2025-09-01");
+        dto.setPath("/categories/MLA1234");
+        dto.setFecha(LocalDate.of(2025, 9, 8));
         dto.setCount(789);
         when(iLogService.consultarPorIp("10.0.0.1")).thenReturn(List.of(dto));
 
@@ -62,8 +63,8 @@ public class ConsultaControllerIntegrationTest {
     void consultarPorFechas_deberiaRetornarListaDeDTOs() throws Exception {
         DatosConsultaOutDTO dto = new DatosConsultaOutDTO();
         dto.setIp("10.0.0.1");
-        dto.setPath("categoria3");
-        dto.setFecha("2025-09-01");
+        dto.setPath("/categories/MLA1234");
+        dto.setFecha(LocalDate.of(2025, 9, 8));
         dto.setCount(789);
         when(iLogService.consultarPorFechas("2025-09-01", "2025-09-08")).thenReturn(List.of(dto));
 
@@ -71,7 +72,7 @@ public class ConsultaControllerIntegrationTest {
                         .param("fechaInicial", "2025-09-01")
                         .param("fechaFinal", "2025-09-08"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].fecha").value("2025-09-01"))
+                .andExpect(jsonPath("$[0].fecha").value("2025-09-08"))
                 .andExpect(jsonPath("$[0].count").value(789));;
     }
 

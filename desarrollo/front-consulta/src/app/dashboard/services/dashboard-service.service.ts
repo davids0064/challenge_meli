@@ -16,11 +16,16 @@ export class DashboardServiceService {
     return this.httpClient.get<any>(`${environment.apiUrl}/api/consultar/consumo-por-categoria`, {params: params});
   }
 
-    consultarPorIp(categoria: any){
+  consultarPorIp(categoria: any){
     const params = new HttpParams()
     .set('filtro', categoria)
     return this.httpClient.get<any>(`${environment.apiUrl}/api/consultar/consumo-por-ip`, {params: params});
   }
+
+  consultarStatus(){
+    return this.httpClient.get<any>(`${environment.apiUrl}/api/consultar/consumo-por-status`);
+  }
+
 
   consultarPorFechas(fechaInicial: any, fechaFinal:any){
     const params = new HttpParams()

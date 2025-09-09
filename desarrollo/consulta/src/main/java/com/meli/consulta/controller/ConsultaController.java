@@ -26,6 +26,11 @@ public class ConsultaController {
         return ResponseEntity.ok(iLogService.consultarPorIp(filtro));
     }
 
+    @GetMapping("consumo-por-status")
+    public ResponseEntity<List<DatosConsultaOutDTO>> consultarPorStatus() {
+        return ResponseEntity.ok(iLogService.consultarPorStatus());
+    }
+
     @GetMapping("consumo-por-fechas")
     public ResponseEntity<List<DatosConsultaOutDTO>> consultarPorFechas(
             @RequestParam String fechaInicial,

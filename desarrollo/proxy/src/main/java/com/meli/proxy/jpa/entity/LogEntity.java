@@ -3,6 +3,7 @@ package com.meli.proxy.jpa.entity;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 
@@ -15,5 +16,6 @@ public class LogEntity {
     private String path;
     private String ip;
     private LocalDateTime fechaUso;
+    private HttpStatus status;
 
 }

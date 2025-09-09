@@ -8,5 +8,6 @@ public interface ILogService {
     List<DatosConsultaOutDTO> consultarPorCategoria(String filtro);
     List<DatosConsultaOutDTO> consultarPorIp(String filtro);
     List<DatosConsultaOutDTO> consultarPorFechas(String fechaInicial, String fechaFinal);
+    List<DatosConsultaOutDTO> consultarPorStatus();
 
 }

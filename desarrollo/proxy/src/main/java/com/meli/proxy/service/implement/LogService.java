@@ -4,6 +4,7 @@ import com.meli.proxy.jpa.entity.LogEntity;
 import com.meli.proxy.jpa.repository.LogRepository;
 import com.meli.proxy.service.ILogService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -15,12 +16,13 @@ public class LogService implements ILogService {
 
     private final LogRepository logRepository;
 
-    public void registroLog(String ip, String path){
+    public void registroLog(String ip, String path, HttpStatus httpStatus) {
         LogEntity logEntity = new LogEntity();
         logEntity.setId(UUID.randomUUID().toString());
         logEntity.setFechaUso(LocalDateTime.now());
         logEntity.setIp(ip);
         logEntity.setPath(path);
+        logEntity.setStatus(httpStatus);
         logRepository.save(logEntity);
     }
 
