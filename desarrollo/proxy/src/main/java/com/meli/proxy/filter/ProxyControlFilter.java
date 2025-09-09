@@ -4,21 +4,16 @@ import com.meli.proxy.config.RateLimitConfig;
 import com.meli.proxy.service.ILogService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.reactivestreams.Publisher;
+import org.springframework.cloud.client.circuitbreaker.ReactiveCircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.ReactiveCircuitBreakerFactory;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.server.reactive.ServerHttpResponse;
-import org.springframework.http.server.reactive.ServerHttpResponseDecorator;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
-import org.springframework.cloud.client.circuitbreaker.ReactiveCircuitBreakerFactory;
-import org.springframework.cloud.client.circuitbreaker.ReactiveCircuitBreaker;
 
-
-import java.awt.image.DataBuffer;
 import java.time.Duration;
 
 @Slf4j
@@ -58,7 +53,10 @@ public class ProxyControlFilter implements GlobalFilter {
                     if (count == 1) {
                         redisTemplate.expire(key, WINDOW).subscribe();
                     }
+                    log.error("count >>>>>>>>> " + count);
+                    log.error("maxRequests >>>>>>>>> " + maxRequests);
                     if (count > maxRequests) {
+                        log.error("entro a limite >>>>>>>>> " + count);
                         log.warn("Rate limit exceeded → IP: {}, Path: {}, Count: {}", path, count);
                         exchange.getResponse().setStatusCode(HttpStatus.TOO_MANY_REQUESTS);
                         return exchange.getResponse().setComplete();

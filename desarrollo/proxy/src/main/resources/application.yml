@@ -27,10 +27,10 @@ rate-limiter:
       replenishRate: 10000
       burstCapacity: 10000
     - path: /items/
-      ip: 152.152.152.152
+      ip: https://3d14d5daa7a8.ngrok-free.app
       replenishRate: 10
       burstCapacity: 10
-    - ip: 152.152.152.152
+    - ip: https://3d14d5daa7a8.ngrok-free.app
       replenishRate: 1000
       burstCapacity: 1000
     - ip: 127.0.0.1
@@ -46,3 +46,15 @@ resilience4j.circuitbreaker:
       slowCallRateThreshold: 100
       waitDurationInOpenState: 10s
       permittedNumberOfCallsInHalfOpenState: 3
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    prometheus:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
