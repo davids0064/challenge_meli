@@ -53,7 +53,10 @@ public class ProxyControlFilter implements GlobalFilter {
                     if (count == 1) {
                         redisTemplate.expire(key, WINDOW).subscribe();
                     }
+                    log.error("count >>>>>>>>> " + count);
+                    log.error("maxRequests >>>>>>>>> " + maxRequests);
                     if (count > maxRequests) {
+                        log.error("entro a limite >>>>>>>>> " + count);
                         log.warn("Rate limit exceeded → IP: {}, Path: {}, Count: {}", path, count);
                         exchange.getResponse().setStatusCode(HttpStatus.TOO_MANY_REQUESTS);
                         return exchange.getResponse().setComplete();

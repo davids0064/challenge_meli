@@ -1,5 +1,5 @@
 server:
-  port: 8083
+  port: 8080
 
 spring:
   redis:
@@ -24,17 +24,13 @@ rate-limiter:
     burstCapacity: 1000
   rules:
     - path: /categories/
-      ip: 98e9c8820987.ngrok-free.app
-      replenishRate: 10000
-      burstCapacity: 10000
-    - path: /categories/
       replenishRate: 10000
       burstCapacity: 10000
     - path: /items/
-      ip: 152.152.152.152
+      ip: https://3d14d5daa7a8.ngrok-free.app
       replenishRate: 10
       burstCapacity: 10
-    - ip: 152.152.152.152
+    - ip: https://3d14d5daa7a8.ngrok-free.app
       replenishRate: 1000
       burstCapacity: 1000
     - ip: 127.0.0.1
