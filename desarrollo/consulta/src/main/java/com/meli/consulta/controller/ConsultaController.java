@@ -11,7 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("api/consultar")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "http://localhost:8082")
 public class ConsultaController {
 
     private final ILogService iLogService;

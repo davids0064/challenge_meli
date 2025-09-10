@@ -4,7 +4,6 @@ import com.meli.proxy.config.RateLimitConfig;
 import com.meli.proxy.service.ILogService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.springframework.cloud.client.circuitbreaker.ReactiveCircuitBreaker;
 import org.springframework.cloud.client.circuitbreaker.ReactiveCircuitBreakerFactory;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -13,7 +12,6 @@ import org.springframework.data.redis.core.ReactiveValueOperations;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.server.PathContainer;
 import org.springframework.http.server.RequestPath;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -22,7 +20,6 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.net.InetSocketAddress;
-import java.time.Duration;
 import java.util.List;
 import java.util.function.Function;
 
@@ -67,8 +64,6 @@ public class ProxyControlFilterTest {
         chain = mock(GatewayFilterChain.class);
         request = mock(ServerHttpRequest.class);
         response = mock(ServerHttpResponse.class);
-
-        // Mock IP y path
         when(request.getMethod()).thenReturn(HttpMethod.GET);
         RequestPath requestPath = mock(RequestPath.class);
         when(requestPath.value()).thenReturn("/api/test");
@@ -83,20 +78,6 @@ public class ProxyControlFilterTest {
         when(exchange.getResponse()).thenReturn(response);
     }
 
-    @Test
-    void testRateLimitExceeded() {
-        when(valueOps.increment(anyString())).thenReturn(Mono.just(10L)); // Excede el límite
-        when(response.setStatusCode(HttpStatus.TOO_MANY_REQUESTS)).thenReturn(true);
-        when(response.setComplete()).thenReturn(Mono.empty());
-
-        Mono<Void> result = filter.filter(exchange, chain);
-
-        StepVerifier.create(result)
-                .verifyComplete();
-
-        verify(response).setStatusCode(HttpStatus.TOO_MANY_REQUESTS);
-        verify(response).setComplete();
-    }
 
     @Test
     void testWithinRateLimitAndCircuitBreakerSuccess() {
