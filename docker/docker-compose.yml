@@ -92,6 +92,19 @@ services:
     depends_on:
       - prometheus
 
+  k6-runner:
+    image: grafana/k6:latest
+    entrypoint: ["sleep", "infinity"]
+    volumes:
+      - ./scripts:/scripts:ro
+    deploy:
+      restart_policy:
+        condition: none
+    networks:
+      - meli-net
+    depends_on:
+      - proxy
+
 networks:
   meli-net:
 
