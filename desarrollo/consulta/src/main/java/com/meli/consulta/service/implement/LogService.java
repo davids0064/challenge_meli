@@ -37,13 +37,18 @@ public class LogService implements ILogService {
     }
 
     @Override
+    public List<DatosConsultaOutDTO> consultarPorStatus() {
+        var agg = AggregationBuilder.build(null, null, null, null, true);
+        return mongoTemplate.aggregate(agg, "log_proxy", DatosConsultaOutDTO.class).getMappedResults();
+    }
+
+    @Override
     public List<DatosConsultaOutDTO> consultarPorFechas(String fechaInicial, String fechaFinal) {
         log.info("Consulta por fechas: {} - {}", fechaInicial, fechaFinal);
         DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
         LocalDateTime desde = LocalDate.parse(fechaInicial, formatter).atStartOfDay();
         LocalDateTime hasta = LocalDate.parse(fechaFinal, formatter).atTime(LocalTime.MAX);
-        String regexPath = "^/categories/MLA\\d+$";
-        var agg = AggregationBuilder.build(regexPath, "path", desde, hasta, false);
+        var agg = AggregationBuilder.build(null, "path", desde, hasta, false);
         return mongoTemplate.aggregate(agg, "log_proxy", DatosConsultaOutDTO.class).getMappedResults();
     }
 

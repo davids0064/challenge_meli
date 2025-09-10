@@ -15,5 +15,6 @@ public class LogEntity {
     private String path;
     private String ip;
     private LocalDateTime fechaUso;
+    private String status;
 
 }

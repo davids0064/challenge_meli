@@ -3,20 +3,18 @@ server:
 
 spring:
   redis:
-    host: localhost
+    host: redis
     port: 6379
   data:
     mongodb:
-      uri: mongodb://localhost:27017/proxymelidb
+      uri: mongodb://mongodb:27017/proxymelidb
   cloud:
     gateway:
-      server:
-        webflux:
-          routes:
-            - id: meli-proxy
-              uri: https://api.mercadolibre.com
-              predicates:
-                - Path=/**
+      routes:
+        - id: meli-proxy
+          uri: https://api.mercadolibre.com
+          predicates:
+            - Path=/**
 
 rate-limiter:
   defaults:
@@ -27,13 +25,13 @@ rate-limiter:
       replenishRate: 10000
       burstCapacity: 10000
     - path: /items/
-      ip: https://3d14d5daa7a8.ngrok-free.app
+      ip: 152.152.152.152
       replenishRate: 10
       burstCapacity: 10
-    - ip: https://3d14d5daa7a8.ngrok-free.app
+    - ip: 152.152.152.152
       replenishRate: 1000
       burstCapacity: 1000
-    - ip: 127.0.0.1
+    - ip: 152.152.152.152
       replenishRate: 1
       burstCapacity: 1
 
@@ -51,10 +49,11 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,prometheus
+        include: health, metrics, prometheus
   endpoint:
     prometheus:
-      enabled: true
+      access: unrestricted
   metrics:
-    tags:
-      application: ${spring.application.name}
+    export:
+      prometheus:
+        enabled: true

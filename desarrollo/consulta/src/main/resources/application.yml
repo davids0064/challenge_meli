@@ -1,10 +1,10 @@
 server:
-  port: 8084
+  port: 8081
 
 spring:
   data:
     mongodb:
-      uri: mongodb://localhost:27017/proxymelidb
+      uri: mongodb://mongodb:27017/proxymelidb
 
 resilience4j.circuitbreaker:
   instances:

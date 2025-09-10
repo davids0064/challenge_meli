@@ -1,0 +1,99 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:latest
+    ports:
+      - "6380:6379"
+    networks:
+      - meli-net
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27018:27017"
+    networks:
+      - meli-net
+
+  proxy:
+    image: meli-proxy:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.proxy
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: on-failure
+    ports:
+      - "8080:8080"
+    networks:
+      - meli-net
+    depends_on:
+      - redis
+      - mongodb
+
+  consulta:
+    image: meli-consulta:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.consulta
+    ports:
+      - "8081:8081"
+    networks:
+      - meli-net
+    depends_on:
+      - proxy
+
+  front:
+    image: meli-front:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.front
+    ports:
+      - "8082:80"
+    networks:
+      - meli-net
+    depends_on:
+      - consulta
+
+  datadog-agent:
+    image: datadog/agent:latest
+    environment:
+      - DD_API_KEY=6ca19c6547277d6e8d9c83f64bd0aaf96ff765f9
+      - DD_SITE=datadoghq.com
+      - DD_LOGS_ENABLED=true
+      - DD_PROCESS_AGENT_ENABLED=true
+      - DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./prometheus.yaml:/etc/datadog-agent/conf.d/prometheus.d/conf.yaml:ro
+    networks:
+      - meli-net
+    depends_on:
+      - proxy
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+    ports:
+      - "9090:9090"
+    networks:
+      - meli-net
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3001:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    networks:
+      - meli-net
+    depends_on:
+      - prometheus
+
+networks:
+  meli-net:
+
+volumes:
+  grafana-storage:

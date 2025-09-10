@@ -11,7 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("api/consultar")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "http://localhost:8082")
 public class ConsultaController {
 
     private final ILogService iLogService;
@@ -24,6 +24,11 @@ public class ConsultaController {
     @GetMapping("consumo-por-ip")
     public ResponseEntity<List<DatosConsultaOutDTO>> consultarPorIp(@RequestParam String filtro) {
         return ResponseEntity.ok(iLogService.consultarPorIp(filtro));
+    }
+
+    @GetMapping("consumo-por-status")
+    public ResponseEntity<List<DatosConsultaOutDTO>> consultarPorStatus() {
+        return ResponseEntity.ok(iLogService.consultarPorStatus());
     }
 
     @GetMapping("consumo-por-fechas")

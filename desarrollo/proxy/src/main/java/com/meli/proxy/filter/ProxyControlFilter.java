@@ -37,17 +37,13 @@ public class ProxyControlFilter implements GlobalFilter {
         if (ip == null && exchange.getRequest().getRemoteAddress() != null) {
             ip = exchange.getRequest().getRemoteAddress().getAddress().getHostAddress();
         }
-        // Construir clave única (IP + path)
         String key = "rate:" + ip + ":" + path;
         log.info("Request received → IP: {}, Method: {}, Path: {}", ip, method, path);
-
-        // Buscar regla que aplique
         RateLimitConfig.Rule matchedRule = obtenerReglas(ip, path);
-
         log.error("matchedRule.getIp() >>>>>>>> " + matchedRule.getIp());
-        // Si no hay regla específica, usar defaults
         int maxRequests = (matchedRule != null) ? matchedRule.getReplenishRate() : rateLimitConfig.getDefaults().getReplenishRate();
-        iLogService.registroLog(ip, path);
+
+        String finalIp = ip;
         return redisTemplate.opsForValue().increment(key)
                 .flatMap(count -> {
                     if (count == 1) {
@@ -56,10 +52,14 @@ public class ProxyControlFilter implements GlobalFilter {
                     log.error("count >>>>>>>>> " + count);
                     log.error("maxRequests >>>>>>>>> " + maxRequests);
                     if (count > maxRequests) {
+                        iLogService.registroLog(finalIp, path, HttpStatus.TOO_MANY_REQUESTS);
                         log.error("entro a limite >>>>>>>>> " + count);
                         log.warn("Rate limit exceeded → IP: {}, Path: {}, Count: {}", path, count);
                         exchange.getResponse().setStatusCode(HttpStatus.TOO_MANY_REQUESTS);
+                        log.warn("exchange.getResponse().getStatusCode()", exchange.getResponse().getStatusCode().value());
                         return exchange.getResponse().setComplete();
+                    } else {
+                        iLogService.registroLog(finalIp, path, HttpStatus.OK);
                     }
                     ReactiveCircuitBreaker circuitBreaker = circuitBreakerFactory.create("meliBackend");
                     return circuitBreaker.run(
@@ -70,6 +70,7 @@ public class ProxyControlFilter implements GlobalFilter {
                             throwable -> {
                                 log.error("Circuit breaker triggered → {}", throwable.getMessage());
                                 exchange.getResponse().setStatusCode(HttpStatus.SERVICE_UNAVAILABLE);
+                                iLogService.registroLog(finalIp, path, HttpStatus.SERVICE_UNAVAILABLE);
                                 return exchange.getResponse().setComplete();
                             });
                 });
