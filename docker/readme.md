@@ -8,7 +8,9 @@ Pasos:
 	- docker build -t meli-proxy:latest -f Dockerfile.proxy .
 	- docker build -t meli-consulta:latest -f Dockerfile.consulta .
 	- docker build -t meli-front:latest -f Dockerfile.front .
-3. Una vez construidas las imagenes, se debe levantar el resto de las imagenes con el archivo docker-compose.yml, ejecutando el comando
+3. Se debe iniciar el docker swarm
+	- docker swarm init
+4. Una vez construidas las imagenes, se debe levantar el resto de las imagenes con el archivo docker-compose.yml, ejecutando el comando
 	- docker stack deploy -c docker-compose.yml meli-stack
 	
 ======== Base de datos
