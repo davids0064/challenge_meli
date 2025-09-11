@@ -1,17 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy  } from '@angular/core';
 import * as Chartist from 'chartist';
 import { DashboardServiceService } from './services/dashboard-service.service';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgChartsModule } from 'ng2-charts';
 import { ChartConfiguration, ChartType } from 'chart.js';
-import { BehaviorSubject } from 'rxjs';
+import { interval, BehaviorSubject, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy  {
 
   cantidadConsultadosHoy:any = 0;
   cantidadConsultadosDosDias:any = 0;
@@ -28,6 +28,7 @@ export class DashboardComponent implements OnInit {
   maxFechaIni: Date = new Date();
   minFechaFin: Date = new Date();
   maxFechaFin: Date = new Date();
+  private updateSubscription: Subscription;
 
   constructor(
     private dashboardServiceService: DashboardServiceService,
@@ -45,7 +46,16 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.consultarConsultasPorStatus();
+    this.updateSubscription = interval(5000).subscribe(() => {
+      this.consultarConsultasPorStatus();
+    });
+    
+  }
+
+  ngOnDestroy(): void {
+    if (this.updateSubscription) {
+      this.updateSubscription.unsubscribe();
+    }
   }
 
   limpiar(){

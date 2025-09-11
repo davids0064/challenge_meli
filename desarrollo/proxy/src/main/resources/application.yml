@@ -38,12 +38,13 @@ rate-limiter:
 resilience4j.circuitbreaker:
   instances:
     meliBackend:
-      slidingWindowSize: 10
+      slidingWindowSize: 100
       failureRateThreshold: 50
       slowCallDurationThreshold: 2s
       slowCallRateThreshold: 100
       waitDurationInOpenState: 10s
-      permittedNumberOfCallsInHalfOpenState: 3
+      permittedNumberOfCallsInHalfOpenState: 10
+      minimumNumberOfCalls: 20
 
 management:
   endpoints:

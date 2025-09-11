@@ -64,7 +64,7 @@ public class ProxyControlFilter implements GlobalFilter {
                     ReactiveCircuitBreaker circuitBreaker = circuitBreakerFactory.create("meliBackend");
                     return circuitBreaker.run(
                             chain.filter(exchange)
-                                    .timeout(Duration.ofSeconds(1))
+                                    .timeout(Duration.ofSeconds(3))
                                     .doOnSubscribe(sub -> log.info("Subscribed to backend call"))
                                     .doOnTerminate(() -> log.info("Backend call terminated")),
                             throwable -> {
