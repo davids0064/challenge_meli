@@ -4,7 +4,8 @@ para poder tener un despliegue de replicas del servicio de proxy, esto como ejem
 
 Pasos:
 1. Dentro del directorio "challenge_meli/docker" abrir una consola de Powershell
-2. Construir las imagenes del back y front
+2. Construir las imagenes necesarias
+    - docker network create --driver overlay meli-net
 	- docker build -t meli-proxy:latest -f Dockerfile.proxy .
 	- docker build -t meli-consulta:latest -f Dockerfile.consulta .
 	- docker build -t meli-front:latest -f Dockerfile.front .
