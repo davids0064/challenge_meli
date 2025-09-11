@@ -90,3 +90,4 @@ Pasos:
 	- docker service ps meli-stack_grafana --filter "desired-state=running"
 2. Si el estado es "Running" se ejecuta el comando, abrir en browser la siguiente url
 	- http://localhost:3000/d/d47253c5-3aa3-46dc-9361-11ce13d00d1b/meli?orgId=1&from=now-30m&to=now&timezone=browser&refresh=5s
+	
