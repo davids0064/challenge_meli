@@ -56,6 +56,19 @@ resilience4j:
         permittedNumberOfCallsInHalfOpenState: 10
         minimumNumberOfCalls: 10
         automaticTransitionFromOpenToHalfOpenEnabled: true
+  timelimiter:
+    instances:
+      meliBackend:
+        timeoutDuration: 3s
+        cancelRunningFuture: true
+  retry:
+    instances:
+      meliBackend:
+        maxAttempts: 3
+        waitDuration: 500ms
+        retryExceptions:
+          - java.io.IOException
+          - java.net.SocketTimeoutException
 
 management:
   endpoints:

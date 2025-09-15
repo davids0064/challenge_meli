@@ -93,7 +93,6 @@ public class ProxyControlFilter implements GlobalFilter {
                     Duration timeout = Duration.ofSeconds(rateLimitConfig.getBackendTimeoutSeconds());
                     return circuitBreaker.run(
                             chain.filter(exchange)
-                                    .timeout(timeout)
                                     .doOnSubscribe(sub -> log.info("🔌 Backend subscribed"))
                                     .doOnTerminate(() -> log.info("✅ Backend terminated")),
                             fallback(exchange, ip, path));
