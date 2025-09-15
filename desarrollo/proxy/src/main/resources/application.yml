@@ -18,6 +18,10 @@ spring:
           uri: https://api.mercadolibre.com
           predicates:
             - Path=/**
+        - id: test-route
+          uri: http://localhost:8081
+          predicates:
+            - Path=/test/**
 
 rate-limiter:
   defaults:

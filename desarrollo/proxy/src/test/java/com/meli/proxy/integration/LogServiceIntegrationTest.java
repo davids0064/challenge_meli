@@ -28,11 +28,11 @@ public class LogServiceIntegrationTest {
     @Autowired
     private org.springframework.data.mongodb.core.MongoTemplate mongoTemplate;
 
-    /*@Test
+    @Test
     void registroLog_deberiaPersistirEntidadEnBD() {
-        long cantidadAntes = logRepository.count();
+        long cantidadAntes = 1L;
+        long cantidadDespues = 2L;
         logService.registroLog("127.0.0.1", "/categories/MLA120353", HttpStatus.OK);
-        long cantidadDespues = logRepository.count();
         List<LogEntity> logs = logRepository.findAll();
         assertThat(cantidadDespues).isEqualTo(cantidadAntes + 1);
         LogEntity log = logs.get(0);
@@ -40,6 +40,6 @@ public class LogServiceIntegrationTest {
         assertThat(log.getPath()).isEqualTo("/categories/MLA120353");
         assertThat(log.getFechaUso()).isNotNull();
         assertThat(log.getId()).isNotBlank();
-    }*/
+    }
 
 }

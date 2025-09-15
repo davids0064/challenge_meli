@@ -33,7 +33,6 @@ public class ProxyControlFilter implements GlobalFilter {
     private final RedisScript<Long> tokenBucketScript;
     private final ReactiveCircuitBreakerFactory<?, ?> circuitBreakerFactory;
     private final ILogService iLogService;
-    private final Clock clock = Clock.systemUTC();
     private final MeterRegistry meterRegistry;
 
     @Override
@@ -53,10 +52,8 @@ public class ProxyControlFilter implements GlobalFilter {
         int burstCapacity = matchedRule != null ? matchedRule.getBurstCapacity() : rateLimitConfig.getDefaults().getBurstCapacity();
         log.error("replenishRate >>>>>> " + replenishRate);
         log.error("burstCapacity >>>>>> " + burstCapacity);
+        Clock clock = Clock.systemUTC();
         String now = String.valueOf(clock.millis());
-        Counter c = meterRegistry.counter("proxy_rate_limit_rejections", "ip", ip, "path", path);
-        log.info("Registrando métrica: {}", c.getId());
-        c.increment();
         return redisTemplate.execute(tokenBucketScript, List.of(key),
                         String.valueOf(replenishRate),
                         String.valueOf(burstCapacity),
