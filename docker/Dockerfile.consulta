@@ -1,4 +1,0 @@
-FROM openjdk:17-jdk-slim
-COPY consulta-1.0.0.jar /app/consulta.jar
-EXPOSE 8081
-ENTRYPOINT ["java", "-jar", "/app/consulta.jar"]

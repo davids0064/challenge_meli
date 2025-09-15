@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k6-runner
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: k6-runner
+  template:
+    metadata:
+      labels:
+        app: k6-runner
+    spec:
+      containers:
+        - name: k6-runner
+          image: grafana/k6:latest
+          command: ["sleep", "infinity"]
+          volumeMounts:
+            - name: k6-scripts
+              mountPath: /scripts
+      volumes:
+        - name: k6-scripts
+          hostPath:
+            path: /path/to/scripts/

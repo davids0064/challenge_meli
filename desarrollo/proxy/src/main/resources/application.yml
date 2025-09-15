@@ -1,15 +1,18 @@
 server:
   port: 8080
+  address: 0.0.0.0
 
 spring:
   redis:
-    host: redis
-    port: 6379
+    host: ${SPRING_REDIS_HOST:localhost}
+    port: ${SPRING_REDIS_PORT:6379}
   data:
     mongodb:
-      uri: mongodb://mongodb:27017/proxymelidb
+      uri: mongodb://mongodb:27018/proxymelidb
   cloud:
     gateway:
+      default-filters:
+        - RewritePath=/(?<segment>.*), /${segment}
       routes:
         - id: meli-proxy
           uri: https://api.mercadolibre.com
@@ -20,41 +23,45 @@ rate-limiter:
   defaults:
     replenishRate: 1000
     burstCapacity: 1000
+
   rules:
-    - path: /categories/
-      replenishRate: 10000
-      burstCapacity: 10000
-    - path: /items/
+    - id: limit-ip-global
       ip: 152.152.152.152
+      replenishRate: 1000        # 1000/min → 16 req/seg
+      burstCapacity: 1000
+      path: "/*"
+
+    - id: limit-path-categories
+      path: "/categories/"
+      replenishRate: 10000       # 10000/min → 167 req/seg
+      burstCapacity: 10000
+
+    - id: limit-ip-path-items
+      ip: 152.152.152.152
+      path: "/items/"
       replenishRate: 10
       burstCapacity: 10
-    - ip: 152.152.152.152
-      replenishRate: 1000
-      burstCapacity: 1000
-    - ip: 152.152.152.152
-      replenishRate: 1
-      burstCapacity: 1
 
-resilience4j.circuitbreaker:
-  instances:
-    meliBackend:
-      slidingWindowSize: 100
-      failureRateThreshold: 50
-      slowCallDurationThreshold: 2s
-      slowCallRateThreshold: 100
-      waitDurationInOpenState: 10s
-      permittedNumberOfCallsInHalfOpenState: 10
-      minimumNumberOfCalls: 20
+resilience4j:
+  circuitbreaker:
+    instances:
+      meliBackend:
+        slidingWindowSize: 100
+        failureRateThreshold: 50
+        waitDurationInOpenState: 5s
+        permittedNumberOfCallsInHalfOpenState: 10
+        minimumNumberOfCalls: 10
+        automaticTransitionFromOpenToHalfOpenEnabled: true
 
 management:
   endpoints:
     web:
       exposure:
-        include: health, metrics, prometheus
+        include: health,info,prometheus
   endpoint:
     prometheus:
       access: unrestricted
   metrics:
-    export:
-      prometheus:
-        enabled: true
+    tags:
+      application: proxy-meli
+

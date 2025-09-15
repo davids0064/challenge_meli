@@ -86,6 +86,9 @@ export class DashboardComponent implements OnInit, OnDestroy  {
   };
 
   consultarConsultasPorStatus(){
+    this.cantidadOk = 0;
+    this.cantidadManyToReques = 0;
+    this.cantidadUnavailable = 0;
     this.dashboardServiceService.consultarStatus().subscribe(data => {
       for(let i = 0; data.length > i; i++){
         if(data[i].status == 'OK'){

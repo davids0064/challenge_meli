@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: consulta
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: consulta
+  template:
+    metadata:
+      labels:
+        app: consulta
+    spec:
+      containers:
+        - name: consulta
+          image: meli-consulta:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8081
