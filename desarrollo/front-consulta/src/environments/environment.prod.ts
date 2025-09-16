@@ -4,5 +4,5 @@
 
 export const environment = {
   production: true,
-   apiUrl: 'http://consulta.localhost'
+   apiUrl: 'http://34.71.207.10'
 };

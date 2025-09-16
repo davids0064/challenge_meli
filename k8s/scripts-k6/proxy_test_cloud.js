@@ -15,7 +15,7 @@ export let options = {
 
 export default function () {
   for (let i = 0; i < 2; i++) { // cada VU hace 2 peticiones por iteración
-    let res = http.get('http://proxy.localhost/categories/MLA120350', {
+    let res = http.get('http://34.172.64.199/categories/MLA120350', {
       headers: { 'X-Forwarded-For': '127.0.0.1' }
     });
 
