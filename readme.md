@@ -8,18 +8,18 @@ Para ver el consumo cloud
 
 front:
 
-http://34.10.194.128/#/dashboard
+http://34.58.187.162/#/dashboard
 
 grafana:
 
-http://34.69.105.197/d/d1733f40-27d7-4d96-b487-0524cf3ae8da/meli?orgId=1&from=now-5m&to=now&timezone=browser&refresh=auto
+http://34.28.1.94/d/ee72abae-a043-408a-93bb-20372153d6fe/new-dashboard?orgId=1&from=now-6h&to=now&timezone=browser
 
 user: admin
 pass: proxy_meli
 
 consumo del api:
 powershell
-curl http://34.172.64.199/categories/MLA120350
+curl http://35.193.18.51/categories/MLA120350
 
 para la prueba masiva, ejecutar }
 
